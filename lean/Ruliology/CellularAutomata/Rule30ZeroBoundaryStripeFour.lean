@@ -1,21 +1,65 @@
 module
 
+public import Ruliology.CellularAutomata.Rule30ZeroBoundaryStripe
 public import Ruliology.CellularAutomata.Rule30ZeroBoundaryStripeFamily
 public import Ruliology.CellularAutomata.Rule30Certificates.ZeroBoundaryStripeCycles3
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion00
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion01
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion02
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion03
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion04
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion05
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion06
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion07
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion08
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion09
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion10
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion11
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion12
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion13
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion14
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion15
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion16
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion17
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion18
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion19
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion20
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion21
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion22
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion23
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion24
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion25
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion26
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion27
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion28
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion29
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion30
+public import Ruliology.CellularAutomata.Rule30Certificates.StripeTail13Completion31
 
 /-!
-# Stripe prefixes with four tail cells: death within `31` steps of arrival
+# Stripe prefixes with four and five tail cells: death within `31` or `45` steps of arrival
 
 For every `m` and every four-bit tail `v`, read from the boundary outwards (`tail4`), the start
 `row4 m v` (the stripe at depths `1, …, m`, then `v`, then white) has its first deviation from the
-stripe at some depth `d ≤ m + 6`, and depth `1` is white at some even time `≤ d - 1 + 31`. Every
-class `(m mod 2, v)` is covered except `v = 13` with `m` odd. This carries `stripe_prefix_family`
-(`Rule30ZeroBoundaryStripeFamily`) from tails of length at most `3` to length `4`, by the same
-route: `family4_of_class`, the four-bit form of `family_of_class`, with one kernel-checked periodic
-front-window orbit per class, from `Rule30Certificates.ZeroBoundaryStripeCycles0` – `3`. The
-theorems live in the namespace `Rule30ZeroBoundaryStripeFront`.
+stripe at some depth `d ≤ m + 6`, and depth `1` is white at some even time `≤ d - 1 + 31` for every
+class `(m mod 2, v)` except `v = 13` with `m` odd (`stripe_four_tail`), and at some even time
+`≤ d - 1 + 45` unconditionally for every class including `(m odd, v = 13)` (`stripe_four_tail_all`).
 
-* `stripe_four_tail`: the family, for `v : Fin 16` with `v ≠ 13` or `m` even.
+Likewise, for every `m` and every five-bit tail `v : Fin 32` (`tail5`, `row5 m v`), the first
+deviation from the stripe occurs at some depth `d ≤ m + 7`, and depth `1` is white at some even
+time `≤ d - 1 + 45` unconditionally for every class (`stripe_five_tail`), and within `≤ d - 1 + 31`
+for all 62 classes outside `(m odd, v = 13)` and `(m even, v = 27)` (`stripe_five_tail_31`).
+
+Odd-depth first deviations die immediately at even time `d - 1` by
+`Rule30ZeroBoundaryStripe.first_defect_hits`. Even-depth first deviations are settled by
+`front_sound` and the kernel-checked periodic front-window orbits in
+`Rule30Certificates.ZeroBoundaryStripeCycles0` – `3`, including the width-`46`, period-`2097152`
+two-level cycle `cyc_13_0` for the reduced front window `(13, 0)`.
+
+- `stripe_four_tail`: four-bit tails `v : Fin 16` with `v ≠ 13` or `m` even (horizon `31`).
+- `stripe_four_tail_all`: all four-bit tails `v : Fin 16` unconditionally (horizon `45`).
+- `stripe_five_tail`: all five-bit tails `v : Fin 32` unconditionally (horizon `45`).
+- `stripe_five_tail_31`: five-bit tails `v : Fin 32` outside `(m odd, 13)` and `(m even, 27)` (horizon `31`).
 -/
 
 @[expose] public section
@@ -31,6 +75,14 @@ open Rule30ZeroBoundaryStripeFront.StripeCycles1
 open Rule30ZeroBoundaryStripeFront.StripeCycles2
 open Rule30ZeroBoundaryStripeFront.StripeCycles3
 open Rule30ZeroBoundary
+open Rule30ZeroBoundaryStripe
+
+theorem complete_path_13 : PathOK 46 45 1 0 (13, 0) (13, 0) 2097152 :=
+  (path_append (path_append (path_append (path_append (path_append Rule30Tail13Completion.path_chunk_00 Rule30Tail13Completion.path_chunk_01) (path_append Rule30Tail13Completion.path_chunk_02 Rule30Tail13Completion.path_chunk_03)) (path_append (path_append Rule30Tail13Completion.path_chunk_04 Rule30Tail13Completion.path_chunk_05) (path_append Rule30Tail13Completion.path_chunk_06 Rule30Tail13Completion.path_chunk_07))) (path_append (path_append (path_append Rule30Tail13Completion.path_chunk_08 Rule30Tail13Completion.path_chunk_09) (path_append Rule30Tail13Completion.path_chunk_10 Rule30Tail13Completion.path_chunk_11)) (path_append (path_append Rule30Tail13Completion.path_chunk_12 Rule30Tail13Completion.path_chunk_13) (path_append Rule30Tail13Completion.path_chunk_14 Rule30Tail13Completion.path_chunk_15)))) (path_append (path_append (path_append (path_append Rule30Tail13Completion.path_chunk_16 Rule30Tail13Completion.path_chunk_17) (path_append Rule30Tail13Completion.path_chunk_18 Rule30Tail13Completion.path_chunk_19)) (path_append (path_append Rule30Tail13Completion.path_chunk_20 Rule30Tail13Completion.path_chunk_21) (path_append Rule30Tail13Completion.path_chunk_22 Rule30Tail13Completion.path_chunk_23))) (path_append (path_append (path_append Rule30Tail13Completion.path_chunk_24 Rule30Tail13Completion.path_chunk_25) (path_append Rule30Tail13Completion.path_chunk_26 Rule30Tail13Completion.path_chunk_27)) (path_append (path_append Rule30Tail13Completion.path_chunk_28 Rule30Tail13Completion.path_chunk_29) (path_append Rule30Tail13Completion.path_chunk_30 Rule30Tail13Completion.path_chunk_31)))))
+
+theorem cyc_13_0 : Cycle 46 45 13 0 2097152 :=
+  ⟨by decide, by decide, complete_path_13⟩
+
 
 /-- Four tail bits, read from the boundary outwards. -/
 def tail4 (v i : Nat) : Bool := if i < 4 then v.testBit i else false
@@ -79,14 +131,101 @@ theorem family4_of_class (m q δ lam v : Nat) (hq : m % 2 = q) (hδ : 1 ≤ δ)
       (by omega) hag (by omega) hcyc
     exact ⟨m + δ - 1 + s, by omega, he, hz⟩
 
+theorem family4_of_class_46 (m q δ lam v : Nat) (hq : m % 2 = q) (hδ : 1 ≤ δ)
+    (hdev : dev4 q δ v = true)
+    (hcyc : Cycle 46 45 (pk (fun i => tail4 v (δ - 1 + i)) 46) ((q + δ) % 2) lam) :
+    (∀ k, 1 ≤ k → k < m + δ → row4 m v k = stripe k) ∧
+      row4 m v (m + δ) ≠ stripe (m + δ) ∧
+      ∃ t, t ≤ m + δ - 1 + 45 ∧ t % 2 = 0 ∧ zrow (row4 m v) t 1 = false := by
+  simp only [dev4, Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true,
+    beq_iff_eq, bne_iff_ne, ne_eq] at hdev
+  obtain ⟨hall, hne⟩ := hdev
+  have hag : ∀ k, 1 ≤ k → k < m + δ → row4 m v k = stripe k := by
+    intro k hk1 hk2
+    unfold row4
+    by_cases hkm : k ≤ m
+    · rw [ite_eq_left hkm]
+    · rw [ite_eq_right hkm]
+      obtain ⟨j, rfl⟩ : ∃ j, k = m + j := ⟨k - m, by omega⟩
+      rw [stripe_add_mod m q j hq, show m + j - m - 1 = j - 1 by omega]
+      rcases hall j (by omega) with h | h
+      · omega
+      · exact h
+  refine ⟨hag, ?_, ?_⟩
+  · unfold row4
+    rw [ite_eq_right (by omega), show m + δ - m - 1 = δ - 1 by omega,
+      stripe_add_mod m q δ hq]
+    exact hne
+  · have hw : pk (fun i => row4 m v (m + δ + i)) 46 =
+        pk (fun i => tail4 v (δ - 1 + i)) 46 :=
+      pk_congr _ _ _ fun i _ => by
+        unfold row4
+        rw [ite_eq_right (by omega), show m + δ + i - m - 1 = δ - 1 + i by omega]
+    have hp : (m + δ) % 2 = (q + δ) % 2 := by omega
+    rw [← hw, ← hp] at hcyc
+    obtain ⟨s, hs, he, hz⟩ := front_sound (row4 m v) (m + δ) 46 45 lam
+      (by omega) hag (by omega) hcyc
+    exact ⟨m + δ - 1 + s, by omega, he, hz⟩
+
+/-- Five tail bits, read from the boundary outwards. -/
+def tail5 (v i : Nat) : Bool := if i < 5 then v.testBit i else false
+
+/-- A stripe prefix, five extra cells, and an infinite white tail. -/
+def row5 (m v k : Nat) : Bool :=
+  if k ≤ m then stripe k else tail5 v (k - m - 1)
+
+def dev5 (q δ v : Nat) : Bool :=
+  (List.range δ).all (fun j => j == 0 || tail5 v (j - 1) == stripe (q + j)) &&
+    tail5 v (δ - 1) != stripe (q + δ)
+
+theorem family5_of_class (m q δ K S H lam v : Nat) (hq : m % 2 = q) (hδ : 1 ≤ δ) (hSK : S < K) (hSH : S ≤ H)
+    (hdev : dev5 q δ v = true)
+    (h : (q + δ) % 2 = 1 ∨ Cycle K S (pk (fun i => tail5 v (δ - 1 + i)) K) ((q + δ) % 2) lam) :
+    (∀ k, 1 ≤ k → k < m + δ → row5 m v k = stripe k) ∧
+      row5 m v (m + δ) ≠ stripe (m + δ) ∧
+      ∃ t, t ≤ m + δ - 1 + H ∧ t % 2 = 0 ∧ zrow (row5 m v) t 1 = false := by
+  simp only [dev5, Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true,
+    beq_iff_eq, bne_iff_ne, ne_eq] at hdev
+  obtain ⟨hall, hne⟩ := hdev
+  have hag : ∀ k, 1 ≤ k → k < m + δ → row5 m v k = stripe k := by
+    intro k hk1 hk2
+    unfold row5
+    by_cases hkm : k ≤ m
+    · rw [ite_eq_left hkm]
+    · rw [ite_eq_right hkm]
+      obtain ⟨j, rfl⟩ : ∃ j, k = m + j := ⟨k - m, by omega⟩
+      rw [stripe_add_mod m q j hq, show m + j - m - 1 = j - 1 by omega]
+      rcases hall j (by omega) with h | h
+      · omega
+      · exact h
+  have hne' : row5 m v (m + δ) ≠ stripe (m + δ) := by
+    unfold row5
+    rw [ite_eq_right (by omega), show m + δ - m - 1 = δ - 1 by omega,
+      stripe_add_mod m q δ hq]
+    exact hne
+  refine ⟨hag, hne', ?_⟩
+  rcases h with hodd | hcyc
+  · exact ⟨m + δ - 1, by omega, by omega,
+      first_defect_hits (row5 m v) (m + δ) (by omega) hag hne'⟩
+  · have hw : pk (fun i => row5 m v (m + δ + i)) K =
+        pk (fun i => tail5 v (δ - 1 + i)) K :=
+      pk_congr _ _ _ fun i _ => by
+        unfold row5
+        rw [ite_eq_right (by omega), show m + δ + i - m - 1 = δ - 1 + i by omega]
+    have hp : (m + δ) % 2 = (q + δ) % 2 := by omega
+    rw [← hw, ← hp] at hcyc
+    obtain ⟨s, hs, he, hz⟩ := front_sound (row5 m v) (m + δ) K S lam
+      (by omega) hag (by omega) hcyc
+    exact ⟨m + δ - 1 + s, by omega, he, hz⟩
+
 private theorem lt_sixteen_cases : ∀ v, v < 16 →
     v = 0 ∨ v = 1 ∨ v = 2 ∨ v = 3 ∨ v = 4 ∨ v = 5 ∨ v = 6 ∨ v = 7 ∨ v = 8 ∨ v = 9 ∨ v = 10 ∨ v = 11 ∨
       v = 12 ∨ v = 13 ∨ v = 14 ∨ v = 15 := by
   decide
 
-/-- **Stripe prefixes with four tail cells die.** For every `m` and every four-bit tail `v` but
-`13` with `m` odd, the first deviation `d` of `S[1..m] · v · 0^∞` from the stripe satisfies
-`d ≤ m + 6`, and depth `1` is white at some even time `t ≤ d - 1 + 31`. -/
+/-- **Stripe prefixes with four tail cells die within 31 steps of arrival.** For every `m` and
+every four-bit tail `v` but `13` with `m` odd, the first deviation `d` of `S[1..m] · v · 0^∞` from
+the stripe satisfies `d ≤ m + 6`, and depth `1` is white at some even time `t ≤ d - 1 + 31`. -/
 theorem stripe_four_tail (m : Nat) (v : Fin 16) (hv : v.val ≠ 13 ∨ m % 2 = 0) :
     ∃ d, 1 ≤ d ∧ d ≤ m + 6 ∧
       (∀ k, 1 ≤ k → k < d → row4 m v.val k = stripe k) ∧
@@ -190,6 +329,181 @@ theorem stripe_four_tail (m : Nat) (v : Fin 16) (hv : v.val ≠ 13 ∨ m % 2 = 0
   · obtain ⟨h1, h2, h3⟩ := family4_of_class m 1 1 16384 15 hq (by omega)
       (by decide +kernel) (cycle_congr (by decide +kernel) (by decide) cyc4_15)
     exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+
+/-- **Stripe prefixes with four tail cells die within 45 steps of arrival.**
+Unconditional mortality for every `m` and every four-bit tail `v : Fin 16`. -/
+theorem stripe_four_tail_all (m : Nat) (v : Fin 16) :
+    ∃ d, 1 ≤ d ∧ d ≤ m + 6 ∧
+      (∀ k, 1 ≤ k → k < d → row4 m v.val k = stripe k) ∧
+      row4 m v.val d ≠ stripe d ∧
+      ∃ t, t ≤ d - 1 + 45 ∧ t % 2 = 0 ∧ zrow (row4 m v.val) t 1 = false := by
+  by_cases hv : v.val ≠ 13 ∨ m % 2 = 0
+  · obtain ⟨d, hd1, hd2, hag, hne, t, ht, he, hz⟩ := stripe_four_tail m v hv
+    exact ⟨d, hd1, hd2, hag, hne, t, by omega, he, hz⟩
+  · have hv13 : v.val = 13 := by omega
+    have hq : m % 2 = 1 := by omega
+    rw [hv13]
+    obtain ⟨h1, h2, h3⟩ := family4_of_class_46 m 1 1 2097152 13 hq (by omega)
+      (by decide +kernel) (cycle_congr (by decide +kernel) (by decide) cyc_13_0)
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+
+private theorem lt_thirty_two_cases : ∀ v, v < 32 →
+    v = 0 ∨ v = 1 ∨ v = 2 ∨ v = 3 ∨ v = 4 ∨ v = 5 ∨ v = 6 ∨ v = 7 ∨
+    v = 8 ∨ v = 9 ∨ v = 10 ∨ v = 11 ∨ v = 12 ∨ v = 13 ∨ v = 14 ∨ v = 15 ∨
+    v = 16 ∨ v = 17 ∨ v = 18 ∨ v = 19 ∨ v = 20 ∨ v = 21 ∨ v = 22 ∨ v = 23 ∨
+    v = 24 ∨ v = 25 ∨ v = 26 ∨ v = 27 ∨ v = 28 ∨ v = 29 ∨ v = 30 ∨ v = 31 := by
+  decide
+
+/-- **Stripe prefixes with five tail cells die within 45 steps of arrival.**
+For every `m` and every five-bit tail `v : Fin 32`, the first deviation `d` of `S[1..m] · v · 0^∞`
+from the stripe is at depth `≤ m + 7`, and depth `1` is white at some even time `≤ d - 1 + 45`. -/
+theorem stripe_five_tail (m : Nat) (v : Fin 32) :
+    ∃ d, 1 ≤ d ∧ d ≤ m + 7 ∧
+      (∀ k, 1 ≤ k → k < d → row5 m v.val k = stripe k) ∧
+      row5 m v.val d ≠ stripe d ∧
+      ∃ t, t ≤ d - 1 + 45 ∧ t % 2 = 0 ∧ zrow (row5 m v.val) t 1 = false := by
+  obtain ⟨v, hv32⟩ := v
+  rcases Nat.mod_two_eq_zero_or_one m with hq | hq <;>
+    rcases lt_thirty_two_cases v hv32 with
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 0 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 3 32 31 45 0 1 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 2 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 4096 3 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_1_0))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 4 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 5 32 31 45 0 5 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 5, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 6 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 16384 7 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_3_0))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 8 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 3 32 31 45 0 9 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 10 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 65536 11 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_5_0))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 12 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 4 32 31 45 4096 13 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_1_0))
+    exact ⟨m + 4, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 14 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 16384 15 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_7_0))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 16 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 3 32 31 45 0 17 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 18 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 4096 19 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_9))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 20 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 7 32 31 45 0 21 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 7, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 22 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 65536 23 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_11))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 24 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 3 32 31 45 0 25 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 26 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 46 45 45 2097152 27 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_13_0))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 28 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 4 32 31 45 16384 29 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_3_0))
+    exact ⟨m + 4, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 1 32 31 45 0 30 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 0 2 32 31 45 16384 31 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_15))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 0 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 4096 1 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_1_0))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 4 32 31 45 0 2 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 4, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 3 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_3_0))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 4 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 65536 5 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_5_0))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 3 32 31 45 4096 6 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_1_0))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 7 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_7_0))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 8 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 4096 9 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_9))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 6 32 31 45 0 10 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 6, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 65536 11 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_11))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 12 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 46 45 45 2097152 13 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_13_0))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 3 32 31 45 16384 14 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_3_0))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 15 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc4_15))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 16 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 17 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_17))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 4 32 31 45 0 18 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 4, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 65536 19 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_19))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 20 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 32768 21 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_21))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 3 32 31 45 65536 22 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_5_0))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 23 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_23))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 24 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 16384 25 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_25))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 5 32 31 45 4096 26 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_1_0))
+    exact ⟨m + 5, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 4096 27 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_27))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 2 32 31 45 0 28 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inl (by decide))
+    exact ⟨m + 2, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 65536 29 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_29))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 3 32 31 45 16384 30 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc_7_0))
+    exact ⟨m + 3, by omega, by omega, h1, h2, h3⟩
+  · obtain ⟨h1, h2, h3⟩ := family5_of_class m 1 1 32 31 45 65536 31 hq (by omega) (by omega) (by omega) (by decide +kernel) (Or.inr (cycle_congr (by decide +kernel) (by decide) cyc5_31))
+    exact ⟨m + 1, by omega, by omega, h1, h2, h3⟩
+
+theorem stripe_five_tail_all (m : Nat) (v : Fin 32) :
+    ∃ d, 1 ≤ d ∧ d ≤ m + 7 ∧
+      (∀ k, 1 ≤ k → k < d → row5 m v.val k = stripe k) ∧
+      row5 m v.val d ≠ stripe d ∧
+      ∃ t, t ≤ d - 1 + 45 ∧ t % 2 = 0 ∧ zrow (row5 m v.val) t 1 = false :=
+  stripe_five_tail m v
 
 end Rule30ZeroBoundaryStripeFront
 end Ruliology.CellularAutomata
