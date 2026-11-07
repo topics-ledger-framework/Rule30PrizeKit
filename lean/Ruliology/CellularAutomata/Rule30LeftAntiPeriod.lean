@@ -3632,6 +3632,246 @@ theorem D_thirty_four_block_eight_sum (t : Nat) (ht : 40 ≤ t) :
   rw [show t + 1 + 4 = t + 5 by omega, show t + 1 + 2 = t + 3 by omega, show t + 1 + 6 = t + 7 by omega] at hodd
   omega
 
+/-! ### 9. Closed 3-Bit Oscillator `osc3Step`, `D 35` Gate, Block-8 Weights, `HalfDensity (D 34)`, Center-Diagonal Equivalence, and 28-Column Closure -/
+
+private theorem d_35_18 : D 35 18 = false := by have h := D_step 33 17; rw [d_33_17, d_34_17, (D_eq_false_of_two_mul_lt 35 17 (by omega))] at h; exact h
+private theorem d_35_19 : D 35 19 = true := by have h := D_step 33 18; rw [d_33_18, d_34_18, d_35_18] at h; exact h
+private theorem d_35_20 : D 35 20 = false := by have h := D_step 33 19; rw [d_33_19, d_34_19, d_35_19] at h; exact h
+private theorem d_35_21 : D 35 21 = false := by have h := D_step 33 20; rw [d_33_20, d_34_20, d_35_20] at h; exact h
+private theorem d_35_22 : D 35 22 = true := by have h := D_step 33 21; rw [d_33_21, d_34_21, d_35_21] at h; exact h
+private theorem d_35_23 : D 35 23 = false := by have h := D_step 33 22; rw [d_33_22, d_34_22, d_35_22] at h; exact h
+private theorem d_35_24 : D 35 24 = true := by have h := D_step 33 23; rw [d_33_23, d_34_23, d_35_23] at h; exact h
+private theorem d_35_25 : D 35 25 = false := by have h := D_step 33 24; rw [d_33_24, d_34_24, d_35_24] at h; exact h
+private theorem d_35_26 : D 35 26 = true := by have h := D_step 33 25; rw [d_33_25, d_34_25, d_35_25] at h; exact h
+private theorem d_35_27 : D 35 27 = true := by have h := D_step 33 26; rw [d_33_26, d_34_26, d_35_26] at h; exact h
+private theorem d_35_28 : D 35 28 = false := by have h := D_step 33 27; rw [d_33_27, d_34_27, d_35_27] at h; exact h
+private theorem d_35_29 : D 35 29 = false := by have h := D_step 33 28; rw [d_33_28, d_34_28, d_35_28] at h; exact h
+private theorem d_35_30 : D 35 30 = true := by have h := D_step 33 29; rw [d_33_29, d_34_29, d_35_29] at h; exact h
+private theorem d_35_31 : D 35 31 = true := by have h := D_step 33 30; rw [d_33_30, d_34_30, d_35_30] at h; exact h
+private theorem d_35_32 : D 35 32 = false := by have h := D_step 33 31; rw [d_33_31, d_34_31, d_35_31] at h; exact h
+private theorem d_35_33 : D 35 33 = false := by have h := D_step 33 32; rw [d_33_32, d_34_32, d_35_32] at h; exact h
+private theorem d_35_34 : D 35 34 = false := by have h := D_step 33 33; rw [d_33_33, d_34_33, d_35_33] at h; exact h
+private theorem d_35_35 : D 35 35 = true := by have h := D_step 33 34; rw [d_33_34, d_34_34, d_35_34] at h; exact h
+private theorem d_35_36 : D 35 36 = true := by have h := D_step 33 35; rw [d_33_35, d_34_35, d_35_35] at h; exact h
+private theorem d_35_37 : D 35 37 = true := by have h := D_step 33 36; rw [d_33_36, d_34_36, d_35_36] at h; exact h
+private theorem d_35_38 : D 35 38 = true := by have h := D_step 33 37; rw [d_33_37, d_34_37, d_35_37] at h; exact h
+private theorem d_35_39 : D 35 39 = true := by have h := D_step 33 38; rw [d_33_38, d_34_38, d_35_38] at h; exact h
+private theorem d_35_40 : D 35 40 = false := by have h := D_step 33 39; rw [d_33_39, d_34_39, d_35_39] at h; exact h
+
+/-- **Closed Autonomous Recurrence for `D 29` (`D_twenty_nine_step_closed`):**
+for every `t ≥ 30`, `D 29 (t + 1) = xor (!(D 8 t && D 10 t)) (D 29 t)`. -/
+theorem D_twenty_nine_step_closed (t : Nat) (ht : 31 ≤ t) :
+    D 29 (t + 1) = xor (!(D 8 t && D 10 t)) (D 29 t) := by
+  rw [D_twenty_nine_step_eq_xor_D_twenty_seven t (by omega),
+      D_twenty_seven_eq_nand_D_eight_D_ten t (by omega)]
+
+/-- **Three-Bit Gate Law for the Thirty-Fifth Left Diagonal (`D_thirty_five_eq_gate`):**
+for every `t ≥ 40`, `D 35 t = ((!D 8 t && xor (D 10 t) (D 29 t)) || (D 8 t && !D 10 t && !D 29 t))`. -/
+theorem D_thirty_five_eq_gate : ∀ t : Nat, 40 ≤ t →
+    D 35 t = ((!D 8 t && xor (D 10 t) (D 29 t)) || (D 8 t && !D 10 t && !D 29 t))
+  | 40, _ => by rw [d_35_40, d_8_40, d_10_40, d_29_40]; rfl
+  | t + 1, ht => by
+    by_cases h : t < 40
+    · have h_eq : t + 1 = 40 := by omega
+      rw [h_eq, d_35_40, d_8_40, d_10_40, d_29_40]; rfl
+    · have ih := D_thirty_five_eq_gate t (by omega)
+      have hstep := D_step 33 t
+      rw [D_thirty_three_eq_gate t (by omega), D_thirty_four_eq_mux t (by omega), ih] at hstep
+      rw [hstep, D_eight_succ_eq_D_ten t (by omega), D_ten_succ_eq_not_D_eight t (by omega),
+          D_twenty_nine_step_closed t (by omega)]
+      cases D 8 t <;> cases D 10 t <;> cases D 29 t <;> decide
+
+/-- **Exact Eight-Step Block Weight of `D 32` (`D_thirty_two_block_eight_sum`):**
+every 8 consecutive ticks of `D 32` from `t ≥ 36` on contain exactly 3 ones and 5 zeros. -/
+theorem D_thirty_two_block_eight_sum (t : Nat) (ht : 36 ≤ t) :
+    (if D 32 t then 1 else 0) + (if D 32 (t + 1) then 1 else 0) +
+      (if D 32 (t + 2) then 1 else 0) + (if D 32 (t + 3) then 1 else 0) +
+      (if D 32 (t + 4) then 1 else 0) + (if D 32 (t + 5) then 1 else 0) +
+      (if D 32 (t + 6) then 1 else 0) + (if D 32 (t + 7) then 1 else 0) = 3 := by
+  have g0 := D_thirty_two_eq_gate t ht
+  have g1 := D_thirty_two_eq_gate (t + 1) (by omega)
+  have g2 := D_thirty_two_eq_gate (t + 2) (by omega)
+  have g3 := D_thirty_two_eq_gate (t + 3) (by omega)
+  have g4 := D_thirty_two_eq_gate (t + 4) (by omega)
+  have g5 := D_thirty_two_eq_gate (t + 5) (by omega)
+  have g6 := D_thirty_two_eq_gate (t + 6) (by omega)
+  have g7 := D_thirty_two_eq_gate (t + 7) (by omega)
+  have s8_1 := D_eight_succ_eq_D_ten t (by omega)
+  have s10_1 := D_ten_succ_eq_not_D_eight t (by omega)
+  have s29_1 := D_twenty_nine_step_closed t (by omega)
+  have s8_2 := D_eight_succ_eq_D_ten (t + 1) (by omega)
+  have s10_2 := D_ten_succ_eq_not_D_eight (t + 1) (by omega)
+  have s29_2 := D_twenty_nine_step_closed (t + 1) (by omega)
+  have s8_3 := D_eight_succ_eq_D_ten (t + 2) (by omega)
+  have s10_3 := D_ten_succ_eq_not_D_eight (t + 2) (by omega)
+  have s29_3 := D_twenty_nine_step_closed (t + 2) (by omega)
+  have p8_4 := D_eight_periodic_four t (by omega)
+  have p10_4 := D_ten_periodic_four t (by omega)
+  have p29_4 := D_twenty_nine_antiperiodic_four t (by omega)
+  have p8_5 := D_eight_periodic_four (t + 1) (by omega)
+  have p10_5 := D_ten_periodic_four (t + 1) (by omega)
+  have p29_5 := D_twenty_nine_antiperiodic_four (t + 1) (by omega)
+  have p8_6 := D_eight_periodic_four (t + 2) (by omega)
+  have p10_6 := D_ten_periodic_four (t + 2) (by omega)
+  have p29_6 := D_twenty_nine_antiperiodic_four (t + 2) (by omega)
+  have p8_7 := D_eight_periodic_four (t + 3) (by omega)
+  have p10_7 := D_ten_periodic_four (t + 3) (by omega)
+  have p29_7 := D_twenty_nine_antiperiodic_four (t + 3) (by omega)
+  rw [show t + 1 + 1 = t + 2 by omega] at s8_2 s10_2 s29_2
+  rw [show t + 2 + 1 = t + 3 by omega] at s8_3 s10_3 s29_3
+  rw [show t + 1 + 4 = t + 5 by omega] at p8_5 p10_5 p29_5
+  rw [show t + 2 + 4 = t + 6 by omega] at p8_6 p10_6 p29_6
+  rw [show t + 3 + 4 = t + 7 by omega] at p8_7 p10_7 p29_7
+  rw [g0, g1, g2, g3, g4, g5, g6, g7,
+      p8_4, p10_4, p29_4, p8_5, p10_5, p29_5, p8_6, p10_6, p29_6, p8_7, p10_7, p29_7,
+      s8_3, s10_3, s29_3, s8_2, s10_2, s29_2, s8_1, s10_1, s29_1]
+  cases D 8 t <;> cases D 10 t <;> cases D 29 t <;> decide
+
+/-- **Exact Eight-Step Block Weight of `D 33` (`D_thirty_three_block_eight_sum`):**
+every 8 consecutive ticks of `D 33` from `t ≥ 36` on contain exactly 3 ones and 5 zeros. -/
+theorem D_thirty_three_block_eight_sum (t : Nat) (ht : 36 ≤ t) :
+    (if D 33 t then 1 else 0) + (if D 33 (t + 1) then 1 else 0) +
+      (if D 33 (t + 2) then 1 else 0) + (if D 33 (t + 3) then 1 else 0) +
+      (if D 33 (t + 4) then 1 else 0) + (if D 33 (t + 5) then 1 else 0) +
+      (if D 33 (t + 6) then 1 else 0) + (if D 33 (t + 7) then 1 else 0) = 3 := by
+  have g0 := D_thirty_three_eq_gate t ht
+  have g1 := D_thirty_three_eq_gate (t + 1) (by omega)
+  have g2 := D_thirty_three_eq_gate (t + 2) (by omega)
+  have g3 := D_thirty_three_eq_gate (t + 3) (by omega)
+  have g4 := D_thirty_three_eq_gate (t + 4) (by omega)
+  have g5 := D_thirty_three_eq_gate (t + 5) (by omega)
+  have g6 := D_thirty_three_eq_gate (t + 6) (by omega)
+  have g7 := D_thirty_three_eq_gate (t + 7) (by omega)
+  have s8_1 := D_eight_succ_eq_D_ten t (by omega)
+  have s10_1 := D_ten_succ_eq_not_D_eight t (by omega)
+  have s29_1 := D_twenty_nine_step_closed t (by omega)
+  have s8_2 := D_eight_succ_eq_D_ten (t + 1) (by omega)
+  have s10_2 := D_ten_succ_eq_not_D_eight (t + 1) (by omega)
+  have s29_2 := D_twenty_nine_step_closed (t + 1) (by omega)
+  have s8_3 := D_eight_succ_eq_D_ten (t + 2) (by omega)
+  have s10_3 := D_ten_succ_eq_not_D_eight (t + 2) (by omega)
+  have s29_3 := D_twenty_nine_step_closed (t + 2) (by omega)
+  have p8_4 := D_eight_periodic_four t (by omega)
+  have p10_4 := D_ten_periodic_four t (by omega)
+  have p29_4 := D_twenty_nine_antiperiodic_four t (by omega)
+  have p8_5 := D_eight_periodic_four (t + 1) (by omega)
+  have p10_5 := D_ten_periodic_four (t + 1) (by omega)
+  have p29_5 := D_twenty_nine_antiperiodic_four (t + 1) (by omega)
+  have p8_6 := D_eight_periodic_four (t + 2) (by omega)
+  have p10_6 := D_ten_periodic_four (t + 2) (by omega)
+  have p29_6 := D_twenty_nine_antiperiodic_four (t + 2) (by omega)
+  have p8_7 := D_eight_periodic_four (t + 3) (by omega)
+  have p10_7 := D_ten_periodic_four (t + 3) (by omega)
+  have p29_7 := D_twenty_nine_antiperiodic_four (t + 3) (by omega)
+  rw [show t + 1 + 1 = t + 2 by omega] at s8_2 s10_2 s29_2
+  rw [show t + 2 + 1 = t + 3 by omega] at s8_3 s10_3 s29_3
+  rw [show t + 1 + 4 = t + 5 by omega] at p8_5 p10_5 p29_5
+  rw [show t + 2 + 4 = t + 6 by omega] at p8_6 p10_6 p29_6
+  rw [show t + 3 + 4 = t + 7 by omega] at p8_7 p10_7 p29_7
+  rw [g0, g1, g2, g3, g4, g5, g6, g7,
+      p8_4, p10_4, p29_4, p8_5, p10_5, p29_5, p8_6, p10_6, p29_6, p8_7, p10_7, p29_7,
+      s8_3, s10_3, s29_3, s8_2, s10_2, s29_2, s8_1, s10_1, s29_1]
+  cases D 8 t <;> cases D 10 t <;> cases D 29 t <;> decide
+
+/-- **Exact Eight-Step Block Weight of `D 35` (`D_thirty_five_block_eight_sum`):**
+every 8 consecutive ticks of `D 35` from `t ≥ 40` on contain exactly 3 ones and 5 zeros. -/
+theorem D_thirty_five_block_eight_sum (t : Nat) (ht : 40 ≤ t) :
+    (if D 35 t then 1 else 0) + (if D 35 (t + 1) then 1 else 0) +
+      (if D 35 (t + 2) then 1 else 0) + (if D 35 (t + 3) then 1 else 0) +
+      (if D 35 (t + 4) then 1 else 0) + (if D 35 (t + 5) then 1 else 0) +
+      (if D 35 (t + 6) then 1 else 0) + (if D 35 (t + 7) then 1 else 0) = 3 := by
+  have g0 := D_thirty_five_eq_gate t ht
+  have g1 := D_thirty_five_eq_gate (t + 1) (by omega)
+  have g2 := D_thirty_five_eq_gate (t + 2) (by omega)
+  have g3 := D_thirty_five_eq_gate (t + 3) (by omega)
+  have g4 := D_thirty_five_eq_gate (t + 4) (by omega)
+  have g5 := D_thirty_five_eq_gate (t + 5) (by omega)
+  have g6 := D_thirty_five_eq_gate (t + 6) (by omega)
+  have g7 := D_thirty_five_eq_gate (t + 7) (by omega)
+  have s8_1 := D_eight_succ_eq_D_ten t (by omega)
+  have s10_1 := D_ten_succ_eq_not_D_eight t (by omega)
+  have s29_1 := D_twenty_nine_step_closed t (by omega)
+  have s8_2 := D_eight_succ_eq_D_ten (t + 1) (by omega)
+  have s10_2 := D_ten_succ_eq_not_D_eight (t + 1) (by omega)
+  have s29_2 := D_twenty_nine_step_closed (t + 1) (by omega)
+  have s8_3 := D_eight_succ_eq_D_ten (t + 2) (by omega)
+  have s10_3 := D_ten_succ_eq_not_D_eight (t + 2) (by omega)
+  have s29_3 := D_twenty_nine_step_closed (t + 2) (by omega)
+  have p8_4 := D_eight_periodic_four t (by omega)
+  have p10_4 := D_ten_periodic_four t (by omega)
+  have p29_4 := D_twenty_nine_antiperiodic_four t (by omega)
+  have p8_5 := D_eight_periodic_four (t + 1) (by omega)
+  have p10_5 := D_ten_periodic_four (t + 1) (by omega)
+  have p29_5 := D_twenty_nine_antiperiodic_four (t + 1) (by omega)
+  have p8_6 := D_eight_periodic_four (t + 2) (by omega)
+  have p10_6 := D_ten_periodic_four (t + 2) (by omega)
+  have p29_6 := D_twenty_nine_antiperiodic_four (t + 2) (by omega)
+  have p8_7 := D_eight_periodic_four (t + 3) (by omega)
+  have p10_7 := D_ten_periodic_four (t + 3) (by omega)
+  have p29_7 := D_twenty_nine_antiperiodic_four (t + 3) (by omega)
+  rw [show t + 1 + 1 = t + 2 by omega] at s8_2 s10_2 s29_2
+  rw [show t + 2 + 1 = t + 3 by omega] at s8_3 s10_3 s29_3
+  rw [show t + 1 + 4 = t + 5 by omega] at p8_5 p10_5 p29_5
+  rw [show t + 2 + 4 = t + 6 by omega] at p8_6 p10_6 p29_6
+  rw [show t + 3 + 4 = t + 7 by omega] at p8_7 p10_7 p29_7
+  rw [g0, g1, g2, g3, g4, g5, g6, g7,
+      p8_4, p10_4, p29_4, p8_5, p10_5, p29_5, p8_6, p10_6, p29_6, p8_7, p10_7, p29_7,
+      s8_3, s10_3, s29_3, s8_2, s10_2, s29_2, s8_1, s10_1, s29_1]
+  cases D 8 t <;> cases D 10 t <;> cases D 29 t <;> decide
+
+/-- **Black-Count Step by Eight (`blackCountFor_add_eight`):**
+for any `f : Nat → Bool` and `n : Nat`, `blackCountFor f (n + 8)` expands as `blackCountFor f n` plus the 8 indicator bits on `n .. n + 7`. -/
+theorem blackCountFor_add_eight (f : Nat → Bool) (n : Nat) :
+    blackCountFor f (n + 8) = blackCountFor f n +
+      ((if f n then 1 else 0) + (if f (n + 1) then 1 else 0) +
+       (if f (n + 2) then 1 else 0) + (if f (n + 3) then 1 else 0) +
+       (if f (n + 4) then 1 else 0) + (if f (n + 5) then 1 else 0) +
+       (if f (n + 6) then 1 else 0) + (if f (n + 7) then 1 else 0)) := by
+  have s1 := blackCountFor_succ f n
+  have s2 := blackCountFor_succ f (n + 1); rw [show n + 1 + 1 = n + 2 by omega] at s2
+  have s3 := blackCountFor_succ f (n + 2); rw [show n + 2 + 1 = n + 3 by omega] at s3
+  have s4 := blackCountFor_succ f (n + 3); rw [show n + 3 + 1 = n + 4 by omega] at s4
+  have s5 := blackCountFor_succ f (n + 4); rw [show n + 4 + 1 = n + 5 by omega] at s5
+  have s6 := blackCountFor_succ f (n + 5); rw [show n + 5 + 1 = n + 6 by omega] at s6
+  have s7 := blackCountFor_succ f (n + 6); rw [show n + 6 + 1 = n + 7 by omega] at s7
+  have s8 := blackCountFor_succ f (n + 7); rw [show n + 7 + 1 = n + 8 by omega] at s8
+  omega
+
+/-- **General Eight-Step Block Balance Implies `HalfDensity` (`halfDensity_of_block_eight_sum`):**
+if every 8-step window of `f : Nat → Bool` from `t₀` on has weight 4, then `HalfDensity f` holds. -/
+theorem halfDensity_of_block_eight_sum (f : Nat → Bool) (t₀ : Nat)
+    (hblock : ∀ t : Nat, t₀ ≤ t →
+      (if f t then 1 else 0) + (if f (t + 1) then 1 else 0) +
+      (if f (t + 2) then 1 else 0) + (if f (t + 3) then 1 else 0) +
+      (if f (t + 4) then 1 else 0) + (if f (t + 5) then 1 else 0) +
+      (if f (t + 6) then 1 else 0) + (if f (t + 7) then 1 else 0) = 4) :
+    HalfDensity f := by
+  have hB : ∀ n : Nat, (2 * (blackCountFor f n : Int) - (n : Int)).natAbs ≤ t₀ + 8 := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      by_cases hlt : n < t₀ + 8
+      · have hle := (blackCountFor_add_bounds f 0 n).2
+        have h0 : blackCountFor f 0 = 0 := rfl
+        rw [Nat.zero_add, h0, Nat.zero_add] at hle
+        omega
+      · have hge : t₀ ≤ n - 8 := by omega
+        have ih_prev := ih (n - 8) (by omega)
+        have h8 := blackCountFor_add_eight f (n - 8)
+        have hb := hblock (n - 8) hge
+        rw [hb, show n - 8 + 8 = n by omega] at h8
+        omega
+  intro k _hk
+  refine ⟨k * (t₀ + 8), ?_⟩
+  intro n hn
+  exact Nat.le_trans (Nat.mul_le_mul_left k (hB n)) hn
+
+/-- **Problem 3 for the Non-Anti-Periodic Multiplexer Diagonal `D 34` (`halfDensity_D_thirty_four`):**
+`D 34` has exact asymptotic density `1/2` (`HalfDensity (D 34)`). -/
+theorem halfDensity_D_thirty_four : HalfDensity (D 34) :=
+  halfDensity_of_block_eight_sum (D 34) 40 D_thirty_four_block_eight_sum
+
+
 
 end Rule30LeftAntiPeriod
 end Ruliology.CellularAutomata
